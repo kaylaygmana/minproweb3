@@ -102,7 +102,7 @@ if (!isset($_SESSION['sudah_login'])) {
         }
 
         #calendarContainer {
-            background-color: #F4F4F4;
+            /* background-color: #F4F4F4; */
             margin-left: 20px;
             width: 50%;
             display: flex; 
@@ -160,6 +160,10 @@ if (!isset($_SESSION['sudah_login'])) {
                 <li class="nav-item">
                     <a class="nav-link active" href="adopsi.php">Adopsi kucing</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="kritiksaran.php">Beri saran</a>
+                </li>
+
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -282,12 +286,17 @@ if (!isset($_SESSION['sudah_login'])) {
   </div>
 </section>
 
-<section id = "kalender" style="position: relative;">
-      <div style="text-align: center; background-color: rgb(81, 96, 81); color: white;padding:20px">
-        <span style="font-weight: bold; "  class="h1">KALENDER</span> <br> <span class="h5">Apa saja yang kami lakukan?</span>
+<section id="kalender" style="position: relative;">
+<div style="text-align: center; background-color: rgb(81, 96, 81); color: white;padding:20px">
+        <span class="h1">KEGIATAN</span> <br> <span class="h5">Apa saja jadwal kami?</span>
       </div>
+
+
+<div id="calendarContainer" style="size: 60px; margin-bottom:30px"></div>
+
+
 <!-- Bagian formulir untuk admin -->
-<div id="formEvent"></div>
+<div id="formEvent" style="size: 6000px; margin-bottom:30px"></div>
 <?php if ($is_admin): ?>
   <label for="datePicker">Pilih Tanggal:</label>
   <input type="date" id="datePicker" name="datePicker">
@@ -301,10 +310,10 @@ if (!isset($_SESSION['sudah_login'])) {
 
 <div class="calendar-and-user">
         <div id="calendarContainer"></div>
-        <section class="horizontal-layout">
-        <script>
-            //untuk non admin
-    function generateCalendaruser() {
+
+<script>
+//untuk non admin
+function generateCalendaruser() {
     var today = new Date(); // Dapatkan tanggal hari ini
     var year = today.getFullYear(); // Ambil tahun dari tanggal hari ini
     var month = today.getMonth() + 1; // Ambil bulan dari tanggal hari ini (perlu ditambah 1 karena indeks bulan dimulai dari 0)
@@ -330,11 +339,8 @@ if (!isset($_SESSION['sudah_login'])) {
                 var cellDate = year.toString().padStart(2, '0') + '-' + month.toString().padStart(2, '0') + '-' + date.toString().padStart(2, '0');
 
                 var color = localStorage.getItem(cellDate);
-                if (new Date(year, month - 1, date).toDateString() === today.toDateString()) {
-                    calendarTable += '<td class="today" style="background-color: ' + (color ? color : '') + '">' + date + '</td>';
-                } else {
-                    calendarTable += '<td style="background-color: ' + (color ? color : '') + '">' + date + '</td>';
-                }
+                calendarTable += '<td style="background-color: ' + (color ? color : '') + '">' + date + '</td>';
+                
                 date++;
             }
         }
@@ -346,114 +352,109 @@ if (!isset($_SESSION['sudah_login'])) {
     document.getElementById('calendarContainer').innerHTML = calendarTable;
 }
 
+function monthName(monthIndex) {
+    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    return months[monthIndex];
+}
+ //untuk admin ==================
+generateCalendaruser();
+
+    function generateCalendar() {
+        var datePicker = document.getElementById('datePicker');
+        var selectedDate = new Date(datePicker.value);
+        var year = selectedDate.getFullYear();
+        
+        var month = selectedDate.getMonth() + 1;
+        
+
+        var daysInMonth = new Date(year, month, 0).getDate();
+        var firstDayOfMonth = new Date(year, month - 1, 1).getDay();
+
+        var calendarTable = '<table>';
+        calendarTable += '<thead><tr><th colspan="7">' + monthName(month - 1) + ' ' + year + '</th></tr>';
+        calendarTable += '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr></thead>';
+        calendarTable += '<tbody>';
+
+        var date = 1;
+        for (var i = 0; i < 6; i++) {
+            calendarTable += '<tr>';
+            for (var j = 0; j < 7; j++) {
+                if (i === 0 && j < firstDayOfMonth) {
+                    calendarTable += '<td></td>';
+                } else if (date > daysInMonth) {
+                    break;
+                } else {
+                    // Generate cellDate with two-digit format for day, month, and year
+                    var cellDate = year.toString().padStart(2, '0') + '-' + month.toString().padStart(2, '0') + '-' + date.toString().padStart(2, '0');
+               
+                    var color = localStorage.getItem(cellDate);
+                    calendarTable += '<td onclick="selectDate(this)" style="background-color: ' + (color ? color : '') + '">' + date + '</td>';
+                    date++;
+                }
+            }
+            calendarTable += '</tr>';
+        }
+
+        calendarTable += '</tbody></table>';
+
+        document.getElementById('calendarContainer').innerHTML = calendarTable;
+    }
+
+    function selectDate(cell) {
+        var selectedColor = document.getElementById('colorPicker').value;
+        var selectedDate = document.getElementById('datePicker').value;
+        var year = selectedDate.split('-')[0];
+        var month = selectedDate.split('-')[1];
+        var day = cell.textContent;
+        cell.style.backgroundColor = selectedColor;
+        var cellDate = year + '-' + month + '-' + day;
+        localStorage.setItem(cellDate, selectedColor);
+    }
+
+    function applyBackgroundColor() {
+        var selectedColor = document.getElementById('colorPicker').value;
+        var selectedDate = document.getElementById('datePicker').value;
+        var cells = document.querySelectorAll('td');
+        var year = selectedDate.split('-')[0];
+        var month = selectedDate.split('-')[1];
+        var day = selectedDate.split('-')[2];
+        for (var i = 0; i < cells.length; i++) {
+            if (cells[i].textContent === day) {
+                cells[i].style.backgroundColor = selectedColor;
+                var cellDate = year + '-' + month + '-' + day;
+                localStorage.setItem(cellDate, selectedColor);
+                break;
+            }
+        }
+    }
 
     function monthName(monthIndex) {
         var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         return months[monthIndex];
     }
-            //untuk admin ==================
-generateCalendaruser();
 
-function generateCalendar() {
+    document.getElementById('datePicker').addEventListener('change', generateCalendar);
+    
+    // Set today's date as default and generate calendar
+    var today = new Date().toISOString().slice(0, 10);
+    document.getElementById('datePicker').value = today;
+    generateCalendar();
 
-    var datePicker = document.getElementById('datePicker');
-    var selectedDate = new Date(datePicker.value);
-    var year = selectedDate.getFullYear();
-    var month = selectedDate.getMonth() + 1;
-
-    var daysInMonth = new Date(year, month, 0).getDate();
-    var firstDayOfMonth = new Date(year, month - 1, 1).getDay();
-
-    var calendarTable = '<table>';
-    calendarTable += '<thead><tr><th colspan="7">' + monthName(month - 1) + ' ' + year + '</th></tr>';
-    calendarTable += '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr></thead>';
-    calendarTable += '<tbody>';
-
-    var date = 1;
-    for (var i = 0; i < 6; i++) {
-        calendarTable += '<tr>';
-        for (var j = 0; j < 7; j++) {
-            if (i === 0 && j < firstDayOfMonth) {
-                calendarTable += '<td></td>';
-            } else if (date > daysInMonth) {
-                break;
-            } else {
-                // Generate cellDate with two-digit format for day, month, and year
-                var cellDate = year.toString().padStart(2, '0') + '-' + month.toString().padStart(2, '0') + '-' + date.toString().padStart(2, '0');
-
-                var color = localStorage.getItem(cellDate);
-                if (selectedDate.toDateString() === today.toDateString()) {
-                    calendarTable += '<td class="today" onclick="selectDate(this)" style="background-color: ' + (color ? color : '') + '">' + date + '</td>';
-                } else {
-                    calendarTable += '<td onclick="selectDate(this)" style="background-color: ' + (color ? color : '') + '">' + date + '</td>';
-                }
-                date++;
+    // Load saved colors from local storage
+    window.onload = function() {
+        var cells = document.querySelectorAll('td');
+        cells.forEach(function(cell) {
+            var cellDate = cell.parentNode.parentNode.parentNode.querySelector('th').textContent + '-' + cell.textContent.padStart(2, '0');
+            var color = localStorage.getItem(cellDate);
+            if (color) {
+                cell.style.backgroundColor = color;
             }
-        }
-        calendarTable += '</tr>';
+        });
     }
+    
+</script>
 
-    calendarTable += '</tbody></table>';
-
-    document.getElementById('calendarContainer').innerHTML = calendarTable;
-    }
-
-            function selectDate(cell) {
-                var selectedColor = document.getElementById('colorPicker').value;
-                var selectedDate = document.getElementById('datePicker').value;
-                var year = selectedDate.split('-')[0];
-                var month = selectedDate.split('-')[1];
-                var day = cell.textContent;
-                cell.style.backgroundColor = selectedColor;
-                var cellDate = year + '-' + month + '-' + day;
-                localStorage.setItem(cellDate, selectedColor);
-            }
-
-            function applyBackgroundColor() {
-                var selectedColor = document.getElementById('colorPicker').value;
-                var selectedDate = document.getElementById('datePicker').value;
-                var cells = document.querySelectorAll('td');
-                var year = selectedDate.split('-')[0];
-                var month = selectedDate.split('-')[1];
-                var day = selectedDate.split('-')[2];
-                for (var i = 0; i < cells.length; i++) {
-                    if (cells[i].textContent === day) {
-                        cells[i].style.backgroundColor = selectedColor;
-                        var cellDate = year + '-' + month + '-' + day;
-                        localStorage.setItem(cellDate, selectedColor);
-                        break;
-                    }
-                }
-            }
-
-            function monthName(monthIndex) {
-                var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                return months[monthIndex];
-            }
-
-            document.getElementById('datePicker').addEventListener('change', generateCalendar);
-
-            // Set today's date as default and generate calendar
-            var today = new Date().toISOString().slice(0, 10);
-            document.getElementById('datePicker').value = today;
-            generateCalendar();
-
-            // Load saved colors from local storage
-            window.onload = function () {
-                var cells = document.querySelectorAll('td');
-                cells.forEach(function (cell) {
-                    var cellDate = cell.parentNode.parentNode.parentNode.querySelector('th').textContent + '-' + cell.textContent.padStart(2, '0');
-                    var color = localStorage.getItem(cellDate);
-                    if (color) {
-                        cell.style.backgroundColor = color;
-                    }
-                });
-            }
-
-        </script>
-    </div>
-    <div class="table-container">
-    <section class="horizontal-layout">
+    <div  style="margin-bottom: -650px; margin-top:-410px" class="table-container">
         <table class="table">
             <thead>
                 <tr>
@@ -461,9 +462,6 @@ function generateCalendar() {
                 </tr>
             </thead>
             <tbody>
-                <tr class="table-primary">
-                    <td>Hari ini</td>
-                </tr>
                 <tr class="table-success">
                     <td>Vaksin umum</td>
                 </tr>
@@ -475,9 +473,7 @@ function generateCalendar() {
                 </tr>
             </tbody>
         </table>
-    </section> 
-</div>
-
+    </div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
