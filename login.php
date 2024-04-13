@@ -6,7 +6,7 @@ session_start();
 
 if(isset($_COOKIE['ingat_saya'])){
     $_SESSION['sudah_login']=true;
-    header('Location: adopsi.php');
+    header('Location: index.php');
     exit;
 }
 
