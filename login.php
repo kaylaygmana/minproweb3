@@ -6,7 +6,7 @@ session_start();
 
 if(isset($_COOKIE['ingat_saya'])){
     $_SESSION['sudah_login']=true;
-    header('Location: index.php');
+    header('Location: adopsi.php');
     exit;
 }
 
@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['is_admin'] = false; // Set sesi is_admin jika pengguna bukan admin
             }
 
-            header("Location: adopsi.php");
+            header("Location: index.php");
             exit();
         } else {
             $error = "Username atau password salah.";
@@ -107,6 +107,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="adopsi.php">Adopsi kucing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="kritiksaran.php">Beri saran</a>
                 </li>
         </div>
     </div>
