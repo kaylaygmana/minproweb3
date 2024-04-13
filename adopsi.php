@@ -36,6 +36,11 @@ if (!isset($_SESSION['sudah_login'])){
         color: black;
     }
 
+    .navbar-nav .nav-link.active:hover {
+            color: #fff; 
+            background-color: rgb(81, 96, 81); 
+            transition: all 0.5s ease; 
+        }
 
     .mt-4 {
         margin-top: 0rem;
@@ -69,9 +74,6 @@ if (!isset($_SESSION['sudah_login'])){
 
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" href="login.php" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02">Akun</a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="logout.php" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02">keluar</a>
                 </li>
