@@ -39,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+            overflow: hidden;
         }
         .container {
             /* max-width: 800px; */
@@ -132,13 +133,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h2>Informasi Rekening Bank</h2>
             <ul>
                 <li>
-                    <span>Bank ABC:</span> 1234567890 (a.n. Donasi ABC)
+                    <span>Bank BCA   :</span> 6595219446 (a.n. Kayla Virrly)
                 </li>
                 <li>
-                    <span>Bank XYZ:</span> 0987654321 (a.n. Donasi XYZ)
+                    <span>Bank Mandiri:</span> 345839038571 (a.n. Jojo Siwa)
                 </li>
                 <li>
-                    <span>Bank 123:</span> 9876543210 (a.n. Donasi 123)
+                    <span>Bank BNI    :</span> 45345872834 (a.n. John Cena)
                 </li>
             </ul>
         </div>      
